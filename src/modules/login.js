@@ -1,8 +1,9 @@
+import {dashboard} from './dashboard.js'
 import { url, mainWrapper } from '../index.js'
 /*
     init the login
 */
-export const renderLogin = () => {
+const renderLogin = () => {
     const loginForm = document.createElement('form')
     loginForm.classList.add('login-form')
     const flex = document.createElement('div')
@@ -79,8 +80,16 @@ const submitUserForm = () => {
             .then(res => res.json())
             .then(user => {
                 console.log(user)
+
+                // clearing DOM
                 mainWrapper.innerHTML = ''
+
+                // dashboard
+                dashboard(mainWrapper, user)
             })
             .catch(err => console.log(err))
     })
 }
+
+
+export default renderLogin
