@@ -69,7 +69,7 @@ const submitUserForm = () => {
                 fetch(`${url}/users/${userData.data.id}`)
                     .then(res => res.json())
                     .then(user => {
-                        
+                        console.log(user)
                         // drops the DOM
                         loginPage.style.display = 'none'
                         dashboardPage.style.display = 'block'
@@ -108,6 +108,7 @@ const dashboard = (user) => {
         get id for {data} = user
     */
     postNoteBook(data.id)
+    
     /* 
         launch the profile character
     */
@@ -190,8 +191,37 @@ const getNoteBook = (include) => {
 *********************************/
 const postNoteBook = (id) => {
     const title = document.querySelector('.notebook-title')
-    console.log(title)
+    const form = document.createElement('form')
+    const leftBar = document.querySelector('div.left-bar')
 
+    form.innerHTML = `<div class="field">
+    <label class="label">NoteBook Name</label>
+    <div class="control has-icons-left has-icons-right">
+        <input class="input"  type="text" placeholder="notebook name" value="">
+    </div>
+        </div>
+            <div class="control">
+                <button class="button is-fullwidth is-link">Submit</button>
+                  </div>`
+
+    leftBar.append(form)
+
+    form.addEventListener('submit', event => {
+        event.preventDefault()
+        const noteBookInput = event.target[0].value
+
+        fetch('http://localhost:3000/api/v1/note_books', {
+            method: 'POST', 
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({name: noteBookInput,user_id: parseInt(id)})
+        })
+            .then(response => response.json())
+            .then(noteBookInput => console.log(noteBookInput))
+            
+    })
+    getNoteBook(noteBookInput)
 }
 
 /*********************************
