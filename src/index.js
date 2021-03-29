@@ -61,12 +61,19 @@ const submitUserForm = () => {
 
         fetch(`${url}/users`, config)
             .then(res => res.json())
-            .then(user => {
-                loginPage.style.display = 'none'
-                dashboardPage.style.display = 'block'
+            .then(userData => {
+                console.log(userData)
 
-                // return dashboard
-                dashboard(user)
+                fetch(`${url}/users/${userData.data.id}`)
+                    .then(res => res.json())
+                    .then(user => {
+                        console.log(user)
+                        loginPage.style.display = 'none'
+                        dashboardPage.style.display = 'block'
+                        dashboardPage.dataset.id = user.data.id
+                        // return dashboard
+                        dashboard(user)
+                    })
             })
             .catch(err => console.log(err))
     })
@@ -77,43 +84,50 @@ const submitUserForm = () => {
  * 
  *  DASHBOARD PAGE
  * 
-*********************************/
+ *********************************/
 const dashboard = (user) => {
     const { data } = user
     
-    /* 
-        launch the profile character
-    */
-    if (dashboardPage.style.display === 'block') {
-        const modal = document.createElement('div')
-        modal.innerHTML = `
-        <div class="modal is-active is-clipped">
-            <div class="modal-background"></div>
-            <div class="modal-content">
-                hello
-            </div>
-            <button class="modal-close is-large" aria-label="close"></button>
-        </div> 
-        `
-        
-        
-        dashboardPage.append(modal)
-        
-        
-        const exitBtn = modal.querySelector('button')
-        exitBtn.addEventListener('click', () => {
-           return modal.className = 'modal'
-        })
-    }
-    
-    
+
     const profileImg = document.querySelector('.profile-img')
     const profileName = document.querySelector('.profile-name')
     const profileEmail = document.querySelector('.profile-email')
+    const noteBookContainer = document.querySelector('#notebook-container')
+
+
+  
+    /* 
+        launch the profile character
+    */
+    // if (dashboardPage.style.display === 'block') {
+    //     const modal = document.createElement('div')
+    //     modal.innerHTML = `
+    //     <div class="modal is-active is-clipped">
+    //         <div class="modal-background"></div>
+    //         <div class="modal-content">
+    //             hello
+    //         </div>
+    //         <button class="modal-close is-large" aria-label="close"></button>
+    //     </div> 
+    //     `
+        
+        
+    //     dashboardPage.append(modal)
+        
+        
+    //     const exitBtn = modal.querySelector('button')
+    //     exitBtn.addEventListener('click', () => {
+    //        return modal.className = 'modal'
+    //     })
+    // }
+    
 
     profileName.textContent = data.attributes.username
     profileEmail.textContent = data.attributes.email
 
 }
+
+
+
 
 main()
