@@ -62,15 +62,19 @@ const submitUserForm = () => {
         fetch(`${url}/users`, config)
             .then(res => res.json())
             .then(userData => {
-                console.log(userData)
 
+                /* 
+                    MONKEY PATCH TO GET THE @params: {INCLUDED}` DATA
+                */
                 fetch(`${url}/users/${userData.data.id}`)
                     .then(res => res.json())
                     .then(user => {
-                        console.log(user)
+                        
+                        // drops the DOM
                         loginPage.style.display = 'none'
                         dashboardPage.style.display = 'block'
                         dashboardPage.dataset.id = user.data.id
+                        
                         // return dashboard
                         dashboard(user)
                     })
@@ -86,16 +90,24 @@ const submitUserForm = () => {
  * 
  *********************************/
 const dashboard = (user) => {
-    const { data } = user
+    /* 
+        destructing the user data
+    */
+    const { data, included } = user
     
-
     const profileImg = document.querySelector('.profile-img')
     const profileName = document.querySelector('.profile-name')
     const profileEmail = document.querySelector('.profile-email')
-    const noteBookContainer = document.querySelector('#notebook-container')
 
+    /* 
+        handling loop through the data of @params{INCLUDED}
+    */
+    allInclude(included)
 
-  
+    /* 
+        get id for {data} = user
+    */
+    postNoteBook(data.id)
     /* 
         launch the profile character
     */
@@ -127,7 +139,117 @@ const dashboard = (user) => {
 
 }
 
+/*********************************
+ * 
+ *   handling loop through the data of @params{INCLUDED}
+ * 
+ *********************************/
+const allInclude = (includeData) => {
+    
+    includeData.forEach(element => {
+        /* 
+            if true pass the note-books
+        */
+        getNoteBook(element)
+    })
+}
 
 
+/*********************************
+ * 
+ *     Get the notbook name
+ * 
+ *********************************/
+const noteBookContainer = document.querySelector('#notebook-container')
+
+const getNoteBook = (include) => {
+
+    if (include.type == 'note-books') {
+        const noteBookItem = document.createElement('li')
+        noteBookItem.dataset.id = include.id
+        /* 
+            adding texts into the li
+        */
+        noteBookItem.textContent = include.attributes.name
+        /* 
+            appending it back to ul
+        */
+        noteBookContainer.append(noteBookItem)
+    }
+    
+    /* 
+        this grabs the @params{include} 
+    */
+    clickNoteBook(include)
+}
+
+/*********************************
+ * 
+ *     Create a new notebook
+ * 
+*********************************/
+const postNoteBook = (id) => {
+    const title = document.querySelector('.notebook-title')
+    console.log(title)
+
+}
+
+/*********************************
+ * 
+ *     Click notebook item to show notes on the right side
+ * 
+*********************************/
+const noteContainer = document.querySelector('.notes-container')
+
+const clickNoteBook = (notes) => {
+
+    noteBookContainer.addEventListener('click', e => {
+
+        if (e.target.matches('li')) {
+        
+            if (notes.type == 'notes') {
+                const card = document.createElement('div')
+                card.classList.add('card')
+                card.dataset.id = notes.id
+
+                card.innerHTML = `
+                    <header class="card-header">
+                        <p class="card-header-title">
+                            ${notes.attributes.name}
+                        </p>
+                    </header>
+                    <div class="card-content">
+                        <div class="content">
+                            ${notes.attributes.paragraph}
+                            <br>
+                            <time datetime="2016-1-1">${notes.attributes["updated-at"]}</time>
+                        </div>
+                    </div>
+                    <footer class="card-footer">
+                        <a href="#" class="card-footer-item">Save</a>
+                        <a href="#" class="card-footer-item">Edit</a>
+                        <a href="#" class="card-footer-item">Delete</a>
+                    </footer>
+                `
+                noteContainer.append(card)
+            }
+        }
+    })
+}
+/* 
+var today = new Date();
+var dd = String(today.getDate()).padStart(2, '0');
+var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
+var yyyy = today.getFullYear();
+
+today = mm + '/' + dd + '/' + yyyy;
+document.write(today);
+*/
+
+/*********************************
+ * 
+ *     Get the notbook name
+ * 
+ *********************************/
 
 main()

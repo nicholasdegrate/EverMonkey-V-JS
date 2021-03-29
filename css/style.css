@@ -34,6 +34,7 @@ body {
 /* #F2F2F2 */
 .left-bar {
     height: 100vh;
+    padding: 1em;
     width: 100%;
     max-width: 239px;
     background: #fff;
