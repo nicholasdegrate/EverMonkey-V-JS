@@ -8,9 +8,14 @@
 const mainWrapper = document.querySelector('#main-wrapper')
 const loginPage = document.querySelector('#login-page')
 const dashboardPage = document.querySelector('#dashboard')
+const noteBookContainer = document.querySelector('#notebook-container')
+const noteContainer = document.querySelector('.notes-container')
+const createNoteButton = document.querySelector('.create-note-btn')
+const modalCreateNote = document.querySelector('.modal-create-note')
+const postNoteForm = document.querySelector('.create-notes')
+const getNotes = document.querySelector('.notes')
 
 const url = 'http://localhost:3000/api/v1'
-
 
 /*********************************
  * 
@@ -20,7 +25,6 @@ const url = 'http://localhost:3000/api/v1'
 const main = () => {
     renderLogin()
 }
-
 /*********************************
  * 
  *  RENDER LOGIN PAGE
@@ -29,8 +33,6 @@ const main = () => {
 const renderLogin = () => {
     submitUserForm()
 }
-
-
 /*********************************
  * 
  *  SUBMIT USER TO FORM
@@ -102,7 +104,7 @@ const dashboard = (user) => {
     /* 
         handling loop through the data of @params{INCLUDED}
     */
-    allInclude(included)
+    getAllNoteBooks(included)
 
     /* 
         get id for {data} = user
@@ -145,7 +147,7 @@ const dashboard = (user) => {
  *   handling loop through the data of @params{INCLUDED}
  * 
  *********************************/
-const allInclude = (includeData) => {
+const getAllNoteBooks = (includeData) => {
     
     includeData.forEach(element => {
         /* 
@@ -161,8 +163,9 @@ const allInclude = (includeData) => {
  *     Get the notbook name
  * 
  *********************************/
-const noteBookContainer = document.querySelector('#notebook-container')
-
+/* 
+    this is correctly not working
+*/
 const getNoteBook = (include) => {
 
     if (include.type == 'note-books') {
@@ -181,7 +184,7 @@ const getNoteBook = (include) => {
     /* 
         this grabs the @params{include} 
     */
-    clickNoteBook(include)
+    // clickNoteBook(include)
 }
 
 /*********************************
@@ -192,36 +195,67 @@ const getNoteBook = (include) => {
 const postNoteBook = (id) => {
     const title = document.querySelector('.notebook-title')
     const form = document.createElement('form')
-    const leftBar = document.querySelector('div.left-bar')
+    const leftBar = document.querySelector('div.title-wrapper')
 
-    form.innerHTML = `<div class="field">
-    <label class="label">NoteBook Name</label>
-    <div class="control has-icons-left has-icons-right">
-        <input class="input"  type="text" placeholder="notebook name" value="">
-    </div>
-        </div>
-            <div class="control">
-                <button class="button is-fullwidth is-link">Submit</button>
-                  </div>`
 
-    leftBar.append(form)
+    title.addEventListener('click', e => {
+        form.innerHTML = `
+                <div class="field" style='margin-top: 2em;'>
+                    <div class="control has-icons-left has-icons-right">
+                        <input class="input"  type="text" placeholder="add notebook" value="">
+                    </div>
+                </div>
+                <div class="control">
+                    <button class="button is-fullwidth is-link">Submit</button>
+                </div>
+                `
+    
+        if (form.style.display == 'block') {
+            form.style.display = 'none';
+        } else {
+            form.style.display = 'block';
+        }
+        
+        leftBar.append(form)
+    })
 
-    form.addEventListener('submit', event => {
-        event.preventDefault()
-        const noteBookInput = event.target[0].value
+
+    form.addEventListener('submit', e => {
+        e.preventDefault()
+        const name = e.target[0].value
+
+        const noteBookObject = {
+            name,
+            user_id: parseInt(id),
+            delete_object: false
+        }
+
+        e.target.reset()
+
+        form.style.display = 'none'
 
         fetch('http://localhost:3000/api/v1/note_books', {
             method: 'POST', 
             headers: {
                 'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({name: noteBookInput,user_id: parseInt(id)})
+            }, body: JSON.stringify(noteBookObject)
         })
-            .then(response => response.json())
-            .then(noteBookInput => console.log(noteBookInput))
+        .then(response => response.json())
+        .then(newNoteBook => {
+
+                const noteBookItem = document.createElement('li')
+                noteBookItem.dataset.id = newNoteBook.data.id
+                /* 
+                    adding texts into the li
+                */
+                noteBookItem.textContent = newNoteBook.data.attributes.name
+                /* 
+                    appending it back to ul
+                */
+                noteBookContainer.append(noteBookItem)
+        })
             
     })
-    getNoteBook(noteBookInput)
 }
 
 /*********************************
@@ -229,30 +263,93 @@ const postNoteBook = (id) => {
  *     Click notebook item to show notes on the right side
  * 
 *********************************/
-const noteContainer = document.querySelector('.notes-container')
-
-const clickNoteBook = (notes) => {
-
-    noteBookContainer.addEventListener('click', e => {
-
-        if (e.target.matches('li')) {
+noteBookContainer.addEventListener('click', e => {
+    if (e.target.matches('li')) {
         
-            if (notes.type == 'notes') {
+        const id = e.target.dataset.id
+        /* 
+            if clicked display create a note
+        */
+        createNoteButton.style.display = 'block'
+        createNoteButton.dataset.id = parseInt(id)
+
+        noteContainer.innerHTML = ''
+
+        fetch(`${url}/note_books/${id}`)
+            .then(res => res.json())
+            .then(singleNoteBook => {
+                const { data, included } = singleNoteBook
+                getAllNotes(included)
+            })
+    }
+})
+
+
+/*********************************
+ * 
+ *     post notes
+ * 
+*********************************/
+createNoteButton.addEventListener('click', e => {
+
+    const noteId = createNoteButton.dataset.id
+    modalCreateNote.style.display = 'block'
+    modalCreateNote.dataset.id = parseInt(noteId)
+
+    const exitBtn = document.querySelector('button.modal-close')
+    exitBtn.addEventListener('click', () => {
+        return modalCreateNote.style.display = 'none'
+    })
+})
+
+    
+
+/*********************************
+ * 
+ *     postNote form listener
+ * 
+*********************************/
+modalCreateNote.addEventListener('submit', e => {
+    if (e.target.matches('form')) {
+        e.preventDefault()
+        const formId = modalCreateNote.dataset.id
+        const noteObject = {
+            name: e.target[0].value,
+            paragraph: e.target[0].value,
+            note_book_id: parseInt(formId),
+            delete_object: false
+        }
+
+
+        const config = {
+            method: 'POST',
+            headers: {
+                "Content-Type": "application/json",
+                "Access-Control-Allow-Origin" : "*", 
+                "Access-Control-Allow-Credentials" : true 
+            }, body: JSON.stringify(noteObject)
+        }
+
+        e.target.reset()
+
+        fetch(`${url}/notes`, config)
+            .then(res => res.json())
+            .then(newNote => {
                 const card = document.createElement('div')
                 card.classList.add('card')
-                card.dataset.id = notes.id
-
+                card.dataset.id = newNote.data.id
+            
                 card.innerHTML = `
                     <header class="card-header">
                         <p class="card-header-title">
-                            ${notes.attributes.name}
+                            ${newNote.data.attributes.name}
                         </p>
                     </header>
                     <div class="card-content">
                         <div class="content">
-                            ${notes.attributes.paragraph}
+                            ${newNote.data.attributes.paragraph}
                             <br>
-                            <time datetime="2016-1-1">${notes.attributes["updated-at"]}</time>
+                            <time datetime="2016-1-1">${newNote.data.attributes["updated-at"].split('T')[0]}</time>
                         </div>
                     </div>
                     <footer class="card-footer">
@@ -261,25 +358,57 @@ const clickNoteBook = (notes) => {
                         <a href="#" class="card-footer-item">Delete</a>
                     </footer>
                 `
-                noteContainer.append(card)
-            }
-        }
-    })
-}
-/* 
-var today = new Date();
-var dd = String(today.getDate()).padStart(2, '0');
-var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
-var yyyy = today.getFullYear();
+                noteContainer.prepend(card)
+            })
+    }
+})
+/*********************************
+ * 
+ *     Render note after presist
+ * 
+*********************************/
+const renderNote = (note) => {
+    const card = document.createElement('div')
+    card.classList.add('card')
+    card.dataset.id = note.id
 
-today = mm + '/' + dd + '/' + yyyy;
-document.write(today);
-*/
+    card.innerHTML = `
+        <header class="card-header">
+            <p class="card-header-title">
+                ${note.attributes.name}
+            </p>
+        </header>
+        <div class="card-content">
+            <div class="content">
+                ${note.attributes.paragraph}
+                <br>
+                <time datetime="2016-1-1">${note.attributes["updated-at"].split('T')[0]}</time>
+            </div>
+        </div>
+        <footer class="card-footer">
+            <a href="#" class="card-footer-item">Save</a>
+            <a href="#" class="card-footer-item">Edit</a>
+            <a href="#" class="card-footer-item">Delete</a>
+        </footer>
+    `
+    noteContainer.append(card) 
+}
 
 /*********************************
  * 
- *     Get the notbook name
+ *     Get the notes
  * 
- *********************************/
+*********************************/
+const getAllNotes = (allNotes) => {
+    allNotes.forEach(note => {
+        renderNote(note)
+    })
+}
+
+/* 
+    edit the page
+*/
+getNotes.contentEditable = 'true'; getNotes.designMode='on'; void 0
+
 
 main()
