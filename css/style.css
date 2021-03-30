@@ -93,3 +93,10 @@ body {
     align-items: center;
     background-color: rgb(243, 239, 183);
 }
+
+/* 
+    create note
+*/
+.create-notes {
+    width: 400px;
+}

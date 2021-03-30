@@ -12,9 +12,10 @@
     <script src='./src/index.js' defer></script>
     <title>EverMonkey</title>
 </head>
+
 <body>
     <div id="main-wrapper">
-<!-- 
+        <!-- 
 
     LOGIN PAGE
 
@@ -26,16 +27,16 @@
                 <div class="field">
                     <label class="label">Username</label>
                     <div class="control has-icons-left has-icons-right">
-                        <input class="input"  type="text" placeholder="username" value="">
+                        <input class="input" type="text" placeholder="username" value="">
                         <span class="icon is-small is-left">
                             <i class="fas fa-user"></i>
                         </span>
                         <span class="icon is-small is-right">
-                           <!-- <i class="fas fa-check"></i> -->
+                            <!-- <i class="fas fa-check"></i> -->
                         </span>
                     </div>
                 </div>
-              
+
                 <div class="field">
                     <label class="label">Email</label>
                     <div class="control has-icons-left has-icons-right">
@@ -44,13 +45,13 @@
                             <i class="fas fa-envelope"></i>
                         </span>
                         <span class="icon is-small is-right">
-                        <!--<i class="fas fa-exclamation-triangle"></i> -->
+                            <!--<i class="fas fa-exclamation-triangle"></i> -->
                         </span>
                     </div>
                     <!-- <p class="help is-danger">This email is invalid</p>-->
                 </div>
-            
-            
+
+
                 <div class="control">
                     <button class="button is-fullwidth is-link">Submit</button>
                 </div>
@@ -59,7 +60,7 @@
         </div>
 
 
-<!-- 
+        <!-- 
 
     DASHBOARD PAGE
 
@@ -73,7 +74,7 @@
                         <img src="./public/monkey.svg" width="142" height="28">
                         <h1 style='margin-left: -2em;'>EverMonkey</h1>
                     </a>
-    
+
                     <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false"
                         data-target="navbarBasicExample">
                         <span aria-hidden="true"></span>
@@ -81,23 +82,23 @@
                         <span aria-hidden="true"></span>
                     </a>
                 </div>
-    
+
                 <div id="navbarBasicExample" class="navbar-menu">
                     <div class="navbar-start">
                         <div class="navbar-item">
                             <input class="input" type="text" placeholder="search">
                         </div>
-    
+
                         <div class="navbar-item">
-                            <div class="buttons">
+                            <div class="buttons create-note-btn" style='display: none;'>
                                 <a class="button is-warning is-fullwidth" style="color: #fff;">
                                     create a note
                                 </a>
                             </div>
                         </div>
-    
+
                     </div>
-    
+
                     <div class="navbar-end">
                         <div class="navbar-item">
                             <ul style='display: flex; '>
@@ -113,8 +114,8 @@
                                     <img class='profile-img' src="./public/monkey.svg" width="112" height="28" />
                                 </li>
                                 <div>
-                                    <li class='profile-name' style='font-weight: bold;'>Nicholas</li>
-                                    <li class='profile-email' style='font-size: 12px;'>nicholasdegrate@gmail.com</li>
+                                    <li class='profile-name' style='font-weight: bold;'></li>
+                                    <li class='profile-email' style='font-size: 12px;'></li>
                                 </div>
                             </ul>
                         </div>
@@ -123,15 +124,15 @@
             </nav>
             <div class='main'>
                 <div class='left-bar'>
-<!-- 
+                    <!-- 
     SIDE BAR
  -->
-                <h2 class='notebook-title'>Notebook</h2>
-                <ul id='notebook-container'>
-                </ul>
+                    <h2 class='notebook-title'>Notebook</h2>
+                    <ul id='notebook-container'>
+                    </ul>
                 </div>
                 <div class='notes-container'>
-                        <!-- all card -->
+                    <!-- all card -->
                 </div>
                 <div class='note-section-container'>
                     <div class='notes'>
@@ -143,5 +144,38 @@
             </div>
         </div>
     </div>
+
+    <!-- 
+    post note 
+     -->
+    <div class="modal is-active is-clipped modal-create-note" style='display: none;'>
+        <div class="modal-background"></div>
+        <div class="modal-content">
+            <form class='create-notes'>
+                <div class="field">
+                    <label class="label">Create Note</label>
+                    <div class="control has-icons-left has-icons-right">
+                        <input class="input" type="text" placeholder="create note" value="">
+                    </div>
+                </div>
+
+                <div class="field">
+                    <label class="label">Paragraph</label>
+                    <div class="control has-icons-left has-icons-right">
+                        <textarea class="textarea" placeholder="10 lines of textarea" rows="10"></textarea>
+                    </div>
+                </div>
+
+
+                <div class="control">
+                    <button class="button is-fullwidth is-link">Submit</button>
+                </div>
+
+            </form>
+        </div>
+        <button class="modal-close is-large" aria-label="close"></button>
+    </div>
+
 </body>
+
 </html>
