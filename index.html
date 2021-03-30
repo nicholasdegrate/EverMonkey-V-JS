@@ -72,7 +72,7 @@
                 <div class="navbar-brand">
                     <a class="navbar-item" href="/" style='margin-left: -50px; margin-right: 60px;'>
                         <img src="./public/monkey.svg" width="142" height="28">
-                        <h1 style='margin-left: -2em;'>EverMonkey</h1>
+                        <h1 style='margin-left: -2em;font-weight: bold; font-size: 1.5em;'>EverMonkey</h1>
                     </a>
 
                     <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false"
@@ -127,7 +127,16 @@
                     <!-- 
     SIDE BAR
  -->
-                    <h2 class='notebook-title'>Notebook</h2>
+                    <div class='title-wrapper'>
+                        <h2 class='notebook-title'
+                            style='font-weight: bold; display: flex; justify-content: space-between; align-items: center;'>
+                            <span>
+                                <i class="fas fa-book-open" style='margin-right: 5px;'></i>
+                                <span>Notebook</span>
+                            </span>
+                            <i class="fas fa-plus"></i>
+                        </h2>
+                    </div>
                     <ul id='notebook-container'>
                     </ul>
                 </div>
@@ -137,7 +146,7 @@
                 <div class='note-section-container'>
                     <div class='notes'>
                         <h3>title</h3>
-                        <textarea class="textarea" placeholder="10 lines of textarea" rows="10" column='40'></textarea>
+                       <div></div>
                     </div>
                     <div class='right-bar'></div>
                 </div>
@@ -148,9 +157,9 @@
     <!-- 
     post note 
      -->
-    <div class="modal is-active is-clipped modal-create-note" style='display: none;'>
+    <div class="modal is-active is-clipped modal-create-note" style='display: none; padding-top: 5em;'>
         <div class="modal-background"></div>
-        <div class="modal-content">
+        <div class="modal-content" style='height: 70vh; background: #fff; display: flex; justify-content: center; align-items: center; border-radius: 10px;'>
             <form class='create-notes'>
                 <div class="field">
                     <label class="label">Create Note</label>

@@ -13,6 +13,7 @@ const noteContainer = document.querySelector('.notes-container')
 const createNoteButton = document.querySelector('.create-note-btn')
 const modalCreateNote = document.querySelector('.modal-create-note')
 const postNoteForm = document.querySelector('.create-notes')
+const getNotes = document.querySelector('.notes')
 
 const url = 'http://localhost:3000/api/v1'
 
@@ -193,21 +194,30 @@ const getNoteBook = (include) => {
 const postNoteBook = (id) => {
     const title = document.querySelector('.notebook-title')
     const form = document.createElement('form')
-    const leftBar = document.querySelector('div.left-bar')
+    const leftBar = document.querySelector('div.title-wrapper')
 
-    form.innerHTML = `
-            <div class="field">
-                <label class="label">NoteBook Name</label>
-                <div class="control has-icons-left has-icons-right">
-                    <input class="input"  type="text" placeholder="notebook name" value="">
+
+    title.addEventListener('click', e => {
+        form.innerHTML = `
+                <div class="field" style='margin-top: 2em;'>
+                    <div class="control has-icons-left has-icons-right">
+                        <input class="input"  type="text" placeholder="add notebook" value="">
+                    </div>
                 </div>
-            </div>
-            <div class="control">
-                <button class="button is-fullwidth is-link">Submit</button>
-            </div>
-            `
+                <div class="control">
+                    <button class="button is-fullwidth is-link">Submit</button>
+                </div>
+                `
+    
+        if (form.style.display == 'block') {
+            form.style.display = 'none';
+        } else {
+            form.style.display = 'block';
+        }
+        
+        leftBar.append(form)
+    })
 
-    leftBar.append(form)
 
     form.addEventListener('submit', e => {
         e.preventDefault()
@@ -220,6 +230,8 @@ const postNoteBook = (id) => {
         }
 
         e.target.reset()
+
+        form.style.display = 'none'
 
         fetch('http://localhost:3000/api/v1/note_books', {
             method: 'POST', 
@@ -283,7 +295,7 @@ createNoteButton.addEventListener('click', e => {
     modalCreateNote.style.display = 'block'
     modalCreateNote.dataset.id = parseInt(noteId)
 
-    const exitBtn = modalCreateNote.querySelector('button')
+    const exitBtn = document.querySelector('button.modal-close')
     exitBtn.addEventListener('click', () => {
         return modalCreateNote.style.display = 'none'
     })
@@ -336,7 +348,7 @@ modalCreateNote.addEventListener('submit', e => {
                         <div class="content">
                             ${newNote.data.attributes.paragraph}
                             <br>
-                            <time datetime="2016-1-1">${newNote.data.attributes["updated-at"]}</time>
+                            <time datetime="2016-1-1">${newNote.data.attributes["updated-at"].split('T')[0]}</time>
                         </div>
                     </div>
                     <footer class="card-footer">
@@ -369,7 +381,7 @@ const renderNote = (note) => {
             <div class="content">
                 ${note.attributes.paragraph}
                 <br>
-                <time datetime="2016-1-1">${note.attributes["updated-at"]}</time>
+                <time datetime="2016-1-1">${note.attributes["updated-at"].split('T')[0]}</time>
             </div>
         </div>
         <footer class="card-footer">
@@ -391,5 +403,11 @@ const getAllNotes = (allNotes) => {
         renderNote(note)
     })
 }
+
+/* 
+    edit the page
+*/
+getNotes.contentEditable = 'true'; getNotes.designMode='on'; void 0
+
 
 main()
