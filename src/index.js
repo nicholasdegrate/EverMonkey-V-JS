@@ -14,6 +14,8 @@ const createNoteButton = document.querySelector('.create-note-btn')
 const modalCreateNote = document.querySelector('.modal-create-note')
 const postNoteForm = document.querySelector('.create-notes')
 const getNotes = document.querySelector('.notes')
+const showNote = document.querySelector('.note-section-container')
+const dashboardId = document.querySelector('#dashboard')
 
 const url = 'http://localhost:3000/api/v1'
 
@@ -315,7 +317,7 @@ modalCreateNote.addEventListener('submit', e => {
         const formId = modalCreateNote.dataset.id
         const noteObject = {
             name: e.target[0].value,
-            paragraph: e.target[0].value,
+            paragraph: e.target[1].value,
             note_book_id: parseInt(formId),
             delete_object: false
         }
@@ -354,7 +356,7 @@ modalCreateNote.addEventListener('submit', e => {
                     </div>
                     <footer class="card-footer">
                         <a href="#" class="card-footer-item">Save</a>
-                        <a href="#" class="card-footer-item">Edit</a>
+                        <a href="#" class="card-footer-item edit-button">Edit</a>
                         <a href="#" class="card-footer-item">Delete</a>
                     </footer>
                 `
@@ -362,6 +364,66 @@ modalCreateNote.addEventListener('submit', e => {
             })
     }
 })
+
+const editNote = () => {
+
+    noteContainer.addEventListener('click', e => {
+        if(e.target.matches('.edit-button')) {
+          //paragraph name of note //submit button
+          const form = document.createElement('form')
+          const noteId = e.target.closest("div.card").dataset.id
+          
+          const noteContent = e.target.closest("div.card").querySelector("div.card-content > .content")
+          const noteTitle = e.target.closest('div.card').querySelector("p.card-header-title")
+          form.classList.add("edit-form-note")
+          form.dataset.id = noteId
+          form.innerHTML = `
+                <div class="field" style='margin-top: 2em;'>
+                    <div class="control has-icons-left has-icons-right">
+                        <input class="input"  type="text" placeholder="add notebook" value="${noteTitle.textContent}">
+                    </div>
+                </div>
+                <div class="field" style='margin-top: 2em;'>
+                <div class="control has-icons-left has-icons-right">
+                <textarea class="textarea" placeholder="10 lines of textarea" rows="10">${noteContent.textContent}</textarea>
+                </div>
+            </div>
+                <div class="control">
+                    <button class="button is-fullwidth is-link">Submit</button>
+                </div>`
+            showNote.append(form)
+        
+        }
+        const editForm = document.querySelector(".edit-form-note")
+        console.log(editForm)
+        editForm.addEventListener('submit', e => {
+            const noteContent = e.target[0].value
+            const noteTitle = e.target[1].value
+            const cardInfo = {
+                name: noteContent,
+                title: noteTitle, 
+                delete_object: false,
+                note_book_id: parseInt(e.target.dataset.id) 
+            }
+
+            fetch(`${url}/notes/${parseInt(e.target.dataset.id)}`, {
+                method: 'PATCH', 
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(cardInfo)
+            })
+                .then(response => response.json())
+                .then(data => console.log(data))
+        })
+    })
+    
+}
+
+
+
+editNote()
+
 /*********************************
  * 
  *     Render note after presist
@@ -387,7 +449,7 @@ const renderNote = (note) => {
         </div>
         <footer class="card-footer">
             <a href="#" class="card-footer-item">Save</a>
-            <a href="#" class="card-footer-item">Edit</a>
+            <a href="#" class="card-footer-item edit-button">Edit</a>
             <a href="#" class="card-footer-item">Delete</a>
         </footer>
     `
@@ -408,7 +470,7 @@ const getAllNotes = (allNotes) => {
 /* 
     edit the page
 */
-getNotes.contentEditable = 'true'; getNotes.designMode='on'; void 0
+// getNotes.contentEditable = 'true'; getNotes.designMode='on'; void 0
 
 
 main()
