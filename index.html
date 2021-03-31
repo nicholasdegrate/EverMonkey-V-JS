@@ -139,16 +139,46 @@
                     </div>
                     <ul id='notebook-container'>
                     </ul>
+                    <div class='trash-container' style='margin-top: 2em;'>
+                        <h2 class='notebook-title'
+                        style='font-weight: bold; display: flex; justify-content: space-between; align-items: center;'>
+                        <span>
+                            <i class="fas fa-trash-alt" style='margin-right: 5px;'></i>
+                            <span>Trash</span>
+                        </span>
+                    </h2>
+
+                    </div>
                 </div>
                 <div class='notes-container'>
                     <!-- all card -->
                 </div>
                 <div class='note-section-container'>
                     <div class='notes'>
-                        <h3>title</h3>
-                       <div></div>
+                        <h2 style='display: flex; justify-content: space-between; align-items: center;'>
+                            <span class='notes-title'></span>
+                            <span clas='date'></span>
+                        </h2>
+                       <div class='edit-paragraph'></div>
                     </div>
-                    <div class='right-bar'></div>
+                    <div class='right-bar'>
+                        <div class='calendar'>
+                            <h2 class='notebook-title'
+                            style='font-weight: bold; display: flex; justify-content: space-between; align-items: center;'>
+                            <span>
+                                <span>Calendar</span>
+                            </span>
+                        </h2>
+                        </div>
+                        <div class='attach-files'>
+                            <h2 class='notebook-title'
+                            style='font-weight: bold; display: flex; justify-content: space-between; align-items: center;'>
+                            <span>
+                                <span>Attached Files</span>
+                            </span>
+                        </h2>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -159,7 +189,7 @@
      -->
     <div class="modal is-active is-clipped modal-create-note" style='display: none; padding-top: 5em;'>
         <div class="modal-background"></div>
-        <div class="modal-content" style='height: 70vh; background: #fff; display: flex; justify-content: center; align-items: center; border-radius: 10px;'>
+        <div class="modal-content" style='height: 70vh; width: 450px;background: #fff; display: flex; justify-content: center; align-items: center; border-radius: 5px;'>
             <form class='create-notes'>
                 <div class="field">
                     <label class="label">Create Note</label>
@@ -185,6 +215,37 @@
         <button class="modal-close is-large" aria-label="close"></button>
     </div>
 
+
+    <!-- 
+    update note 
+     -->
+     <div class="modal is-active is-clipped modal-update-note" style='display: none; padding-top: 5em;'>
+        <div class="modal-background"></div>
+        <div class="modal-content" style='height: 70vh; width: 450px;background: #fff; display: flex; justify-content: center; align-items: center; border-radius: 5px;'>
+            <form class='update-notes' style='width: 90%;'>
+                <div class="field">
+                    <label class="label">Update Note</label>
+                    <div class="control has-icons-left has-icons-right">
+                        <input class="input" type="text" placeholder="create note" value="">
+                    </div>
+                </div>
+
+                <div class="field">
+                    <label class="label">Update Paragraph</label>
+                    <div class="control has-icons-left has-icons-right">
+                        <textarea class="textarea" placeholder="10 lines of textarea" rows="10"></textarea>
+                    </div>
+                </div>
+
+
+                <div class="control">
+                    <button class="button is-fullwidth is-link">Submit</button>
+                </div>
+
+            </form>
+        </div>
+        <button class="modal-close is-large" aria-label="close"></button>
+    </div>
 </body>
 
 </html>

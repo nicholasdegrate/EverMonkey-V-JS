@@ -16,6 +16,7 @@ const postNoteForm = document.querySelector('.create-notes')
 const getNotes = document.querySelector('.notes')
 const showNote = document.querySelector('.note-section-container')
 const dashboardId = document.querySelector('#dashboard')
+const modalUpdateNote = document.querySelector('.modal-update-note')
 
 const url = 'http://localhost:3000/api/v1'
 
@@ -73,7 +74,6 @@ const submitUserForm = () => {
                 fetch(`${url}/users/${userData.data.id}`)
                     .then(res => res.json())
                     .then(user => {
-                        console.log(user)
                         // drops the DOM
                         loginPage.style.display = 'none'
                         dashboardPage.style.display = 'block'
@@ -337,6 +337,7 @@ modalCreateNote.addEventListener('submit', e => {
         fetch(`${url}/notes`, config)
             .then(res => res.json())
             .then(newNote => {
+                modalCreateNote.style.display = 'none'
                 const card = document.createElement('div')
                 card.classList.add('card')
                 card.dataset.id = newNote.data.id
@@ -351,13 +352,12 @@ modalCreateNote.addEventListener('submit', e => {
                         <div class="content">
                             ${newNote.data.attributes.paragraph}
                             <br>
+                            </div>
                             <time datetime="2016-1-1">${newNote.data.attributes["updated-at"].split('T')[0]}</time>
-                        </div>
                     </div>
                     <footer class="card-footer">
-                        <a href="#" class="card-footer-item">Save</a>
                         <a href="#" class="card-footer-item edit-button">Edit</a>
-                        <a href="#" class="card-footer-item">Delete</a>
+                        <a href="#" class="card-footer-item delete-button">Delete</a>
                     </footer>
                 `
                 noteContainer.prepend(card)
@@ -365,65 +365,77 @@ modalCreateNote.addEventListener('submit', e => {
     }
 })
 
-const editNote = () => {
+/*********************************
+ * 
+ *     EDIT NOTE
+ * 
+*********************************/
+noteContainer.addEventListener('click', e => {
 
-    noteContainer.addEventListener('click', e => {
-        if(e.target.matches('.edit-button')) {
-          //paragraph name of note //submit button
-          const form = document.createElement('form')
-          const noteId = e.target.closest("div.card").dataset.id
-          
-          const noteContent = e.target.closest("div.card").querySelector("div.card-content > .content")
-          const noteTitle = e.target.closest('div.card').querySelector("p.card-header-title")
-          form.classList.add("edit-form-note")
-          form.dataset.id = noteId
-          form.innerHTML = `
-                <div class="field" style='margin-top: 2em;'>
-                    <div class="control has-icons-left has-icons-right">
-                        <input class="input"  type="text" placeholder="add notebook" value="${noteTitle.textContent}">
-                    </div>
-                </div>
-                <div class="field" style='margin-top: 2em;'>
-                <div class="control has-icons-left has-icons-right">
-                <textarea class="textarea" placeholder="10 lines of textarea" rows="10">${noteContent.textContent}</textarea>
-                </div>
-            </div>
-                <div class="control">
-                    <button class="button is-fullwidth is-link">Submit</button>
-                </div>`
-            showNote.append(form)
+    if (e.target.matches('.edit-button')) {
+        //   paragraph name of note //submit button
+        const form = document.querySelector('.update-notes')
+        const noteId = e.target.closest("div.card").dataset.id
+        form.dataset.id = noteId
+        form.classList.add("edit-form-note")
+        const noteContent = e.target.closest("div.card").querySelector("div.card-content > .content").textContent
+        const noteTitle = e.target.closest('div.card').querySelector("p.card-header-title").textContent
+        form.querySelector('input').value = noteTitle.replace(/\s+/g, ' ').trim()
+        form.querySelector('textarea').textContent = noteContent.replace(/\s+/g, ' ').trim()
         
-        }
-        const editForm = document.querySelector(".edit-form-note")
-        console.log(editForm)
-        editForm.addEventListener('submit', e => {
-            const noteContent = e.target[0].value
-            const noteTitle = e.target[1].value
-            const cardInfo = {
-                name: noteContent,
-                title: noteTitle, 
-                delete_object: false,
-                note_book_id: parseInt(e.target.dataset.id) 
-            }
+        modalUpdateNote.style.display = 'block'
 
+        /* 
+            doesnt work
+        */
+        const updateExitBtn = document.querySelector('button.modal-close')
+        updateExitBtn.addEventListener('click', () => {
+            console.log(e.target)
+            modalUpdateNote.style.display = 'none'
+        })
+
+        const editForm = document.querySelector(".edit-form-note")
+        editForm.addEventListener('submit', e => {
+            e.preventDefault()
+    
+            const name = e.target[0].value
+            const paragraph = e.target[1].value
+            
             fetch(`${url}/notes/${parseInt(e.target.dataset.id)}`, {
-                method: 'PATCH', 
+                method: 'PATCH',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify(cardInfo)
+                body: JSON.stringify({ name, paragraph })
             })
                 .then(response => response.json())
-                .then(data => console.log(data))
+                .then(updatedNote => {
+                    modalUpdateNote.style.display = 'none'
+                    const currentCard = noteContainer.querySelector(`div[data-id='${e.target.dataset.id}']`)
+                    const currenttitle = currentCard.querySelector('p.card-header-title')
+                    const currentPara = currentCard.querySelector('.content')
+                    currenttitle.textContent = updatedNote.data.attributes.name
+                    currentPara.textContent = updatedNote.data.attributes.paragraph
+                })
+            })
+    /*********************************
+     * 
+     *     DELETE NOTE
+     * 
+    *********************************/
+    } else if (e.target.matches('.delete-button')) {
+        const noteId = e.target.closest("div.card").dataset.id
+        fetch(`${url}/notes/${noteId}`, {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ delete_object: true })
         })
-    })
-    
-}
-
-
-
-editNote()
-
+            .then(res => res.json())
+            .then(deleteNote => e.target.closest('div.card').remove())
+    }
+})
 /*********************************
  * 
  *     Render note after presist
@@ -444,13 +456,12 @@ const renderNote = (note) => {
             <div class="content">
                 ${note.attributes.paragraph}
                 <br>
+                </div>
                 <time datetime="2016-1-1">${note.attributes["updated-at"].split('T')[0]}</time>
-            </div>
         </div>
         <footer class="card-footer">
-            <a href="#" class="card-footer-item">Save</a>
             <a href="#" class="card-footer-item edit-button">Edit</a>
-            <a href="#" class="card-footer-item">Delete</a>
+            <a href="#" class="card-footer-item delete-button">Delete</a>
         </footer>
     `
     noteContainer.append(card) 
