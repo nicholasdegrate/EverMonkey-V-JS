@@ -71,7 +71,7 @@ body {
     border-left: 1px solid rgb(233, 233, 233);
     display: grid;
     grid-template-columns: 1fr;
-    grid-template-rows: 1fr 1fr;
+    grid-template-rows: 1fr 70%;
 }
 .right-bar > div {
     padding: 1em;

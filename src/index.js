@@ -394,13 +394,18 @@ noteContainer.addEventListener('click', e => {
                     const li = document.createElement('li')
                     li.dataset.id = file.id
                     li.innerHTML = `
-                            <div class="card">
+                            <div style='
+                            padding: .5em;
+                            box-shadow: 0 0.5em 1em -0.125em rgb(10 10 10 / 10%), 0 0 0 1px rgb(10 10 10 / 2%);
+                            border-radius: 5px;
+                            margin-top: 1em;
+                            '>
                             <header class="card-header">
-                            <p class="card-header-title">
+                            <p style='padding: .5em; font-weight: bold; '>
                                 ${file.attributes.name}
                             </p>
                             </header>
-                            <p class="card-header-title">
+                            <p  style='font-size: 14px; font-weight: normal !important;  padding: .5em;'>
                                 ${file.attributes.file}
                             </p>
                         </div>
@@ -421,7 +426,49 @@ noteContainer.addEventListener('click', e => {
                 if (e.target.matches('.post-attached-files')) {
                     e.preventDefault()
 
-                    console.log(e.target)
+                    const fileObj = {
+                        name: e.target[0].value,
+                        file: e.target[1].value,
+                        note_id: parseInt(fileFormId)
+                    }
+                    const name = e.target[0].value
+                    const file = e.target[1].value
+
+                    fetch(`${url}/attached_files`, {
+                        method: 'POST',
+                        headers: {
+                            "Content-Type": "application/json",
+                        }, body: JSON.stringify(fileObj)
+                    })
+                        .then(res => res.json())
+                        .then(file => {
+                            modalPostFile.style.display = 'none'
+                            const attachedFilesContainer = document.querySelector('.attached-files-container')
+                            const attachedFilesContainerUL = attachedFilesContainer.querySelector('ul') 
+                            const li = document.createElement('li')
+                            li.dataset.id = file.id
+                            li.innerHTML = `
+                                    <div
+                                    style='
+                                    padding: .5em;
+                                    box-shadow: 0 0.5em 1em -0.125em rgb(10 10 10 / 10%), 0 0 0 1px rgb(10 10 10 / 2%);
+                                    border-radius: 5px;
+                                    margin-top: 1em;
+                                    '
+                                    >
+                                    <header class="card-header">
+                                    <p class="card-header-title">
+                                        ${file.attributes.name}
+                                    </p>
+                                    </header>
+                                    <p style='font-size: 14px; font-weight: normal !important; padding: .5em;'>
+                                        ${file.attributes.file}
+                                    </p>
+                                    </div>
+                            `
+                            attachedFilesContainerUL.append(li)    
+                        
+                        })
                 }
             })
         })
