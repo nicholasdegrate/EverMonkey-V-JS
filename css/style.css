@@ -147,3 +147,7 @@ div.card {
 .attach-file-btn {
     cursor: pointer;
 }
+
+.trash-can-button {
+    cursor: pointer;
+}

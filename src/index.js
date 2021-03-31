@@ -17,6 +17,7 @@ const getNotes = document.querySelector('.notes')
 const showNote = document.querySelector('.note-section-container')
 const dashboardId = document.querySelector('#dashboard')
 const modalUpdateNote = document.querySelector('.modal-update-note')
+const searchBar = document.querySelector('.searchBar')
 
 const url = 'http://localhost:3000/api/v1'
 
@@ -352,8 +353,8 @@ modalCreateNote.addEventListener('submit', e => {
                         <div class="content">
                             ${newNote.data.attributes.paragraph.substring(0, 100) + '...'}
                             <br>
+                            </div>
                             <div class='hidden-para' style='display: none;'>${newNote.data.attributes.paragraph}</div>
-                        </div>
                             <time datetime="2016-1-1">${newNote.data.attributes["updated-at"].split('T')[0]}</time>
                     </div>
                     <footer class="card-footer">
@@ -368,14 +369,14 @@ modalCreateNote.addEventListener('submit', e => {
 
 /*********************************
  * 
- *     EDIT NOTE
+ *   show note on right side
  * 
 *********************************/
 noteContainer.addEventListener('click', e => {
 
     if (e.target.matches('.card-content') || e.target.matches('.content')) {
         const parentCard = e.target.closest('div.card')
-        const contentParagraph = parentCard.querySelector("div.card-content > .content > .hidden-para").textContent
+        const contentParagraph = parentCard.querySelector(".hidden-para").textContent
         const authorTitle = parentCard.querySelector("p.card-header-title").textContent
         getNotes.querySelector('h2 > .notes-title').textContent = authorTitle.replace(/\s+/g, ' ').trim()
         getNotes.querySelector('.edit-paragraph').textContent = contentParagraph.replace(/\s+/g, ' ').trim()
@@ -417,7 +418,6 @@ noteContainer.addEventListener('click', e => {
         const attachedFilesButton = document.querySelector('.attach-file-btn')
         attachedFilesButton.addEventListener('click', e => {
             const fileFormId = parentCard.dataset.id
-            console.log(fileFormId)
             const modalPostFile = document.querySelector('.modal-attached-file')
             modalPostFile.style.display = 'block'
 
@@ -430,9 +430,8 @@ noteContainer.addEventListener('click', e => {
                         file: e.target[1].value,
                         note_id: parseInt(fileFormId)
                     }
-                    const name = e.target[0].value
-                    const file = e.target[1].value
 
+                    e.target.reset()
                     fetch(`${url}/attached_files`, {
                         method: 'POST',
                         headers: {
@@ -442,6 +441,8 @@ noteContainer.addEventListener('click', e => {
                         .then(res => res.json())
                         .then(file => {
                             modalPostFile.style.display = 'none'
+                            console.log(file)
+                            debugger
                             const attachedFilesContainer = document.querySelector('.attached-files-container')
                             const attachedFilesContainerUL = attachedFilesContainer.querySelector('ul') 
                             const li = document.createElement('li')
@@ -457,11 +458,11 @@ noteContainer.addEventListener('click', e => {
                                     >
                                     <header class="card-header">
                                     <p class="card-header-title">
-                                        ${file.attributes.name}
+                                        ${file.data.attributes.name}
                                     </p>
                                     </header>
                                     <p style='font-size: 14px; font-weight: normal !important; padding: .5em;'>
-                                        ${file.attributes.file}
+                                        ${file.data.attributes.file}
                                     </p>
                                     </div>
                             `
@@ -479,7 +480,7 @@ noteContainer.addEventListener('click', e => {
         const noteId = e.target.closest("div.card").dataset.id
         form.dataset.id = noteId
         form.classList.add("edit-form-note")
-        const noteContent = e.target.closest("div.card").querySelector("div.card-content > .content").textContent
+        const noteContent = e.target.closest("div.card").querySelector(".hidden-para").textContent
         const noteTitle = e.target.closest('div.card').querySelector("p.card-header-title").textContent
         form.querySelector('input').value = noteTitle.replace(/\s+/g, ' ').trim()
         form.querySelector('textarea').textContent = noteContent.replace(/\s+/g, ' ').trim()
@@ -514,9 +515,12 @@ noteContainer.addEventListener('click', e => {
                     modalUpdateNote.style.display = 'none'
                     const currentCard = noteContainer.querySelector(`div[data-id='${e.target.dataset.id}']`)
                     const currenttitle = currentCard.querySelector('p.card-header-title')
+                    const hiddenPara = currentCard.querySelector('.hidden-para')
                     const currentPara = currentCard.querySelector('.content')
                     currenttitle.textContent = updatedNote.data.attributes.name
-                    currentPara.textContent = updatedNote.data.attributes.paragraph
+                    currentPara.textContent = updatedNote.data.attributes.paragraph.replace(/\s+/g, ' ').trim()
+                    hiddenPara.textContent = updatedNote.data.attributes.paragraph
+                    console.log(p)
                 })
             })
     /*********************************
@@ -557,13 +561,13 @@ const renderNote = (note) => {
             <div class="content">
                 ${note.attributes.paragraph.substring(0, 150)  + '...'}
                 <br>
+                </div>
                 <div class='hidden-para' style='display: none;'>${note.attributes.paragraph}</div>
-            </div>
                 <time datetime="2016-1-1">${note.attributes["updated-at"].split('T')[0]}</time>
         </div>
         <footer class="card-footer">
-            <a href="#" class="card-footer-item edit-button">Edit</a>
-            <a href="#" class="card-footer-item delete-button">Delete</a>
+        <a href="#" class="card-footer-item edit-button">Edit</a>
+        <a href="#" class="card-footer-item delete-button">Delete</a>
         </footer>
     `
     noteContainer.append(card) 
@@ -576,7 +580,9 @@ const renderNote = (note) => {
 *********************************/
 const getAllNotes = (allNotes) => {
     allNotes.forEach(note => {
-        renderNote(note)
+        if (note.attributes["delete-object"] == false) {
+            renderNote(note)
+        }
     })
 }
 /*********************************
@@ -595,19 +601,18 @@ getNotes.contentEditable = 'true'; getNotes.designMode='on'; void 0
 *********************************/
 const trashCanButton = document.querySelector('.trash-can-button')
 trashCanButton.addEventListener('click', event => {
+    noteContainer.innerHTML = ''
     fetch(`${url}/users/${dashboardId.dataset.id}`)
     .then(res => res.json())
     .then(user => {
         const {data, included} = user
-        //noteContainer.innerHTML = ""
         included.forEach(note => {
-            if(note.type == "notes" && note.attributes["delete-object"] == true)
-            {
+            if(note.type == "notes" && note.attributes["delete-object"] == true) {
                 const card = document.createElement('div')
                 card.classList.add('card')
                 card.dataset.id = note.id
                 card.innerHTML = `
-                    <header class="card-header" style="background: red;">
+                    <header class="card-header">
                         <p class="card-header-title">
                             ${note.attributes.name}
                         </p>
@@ -616,12 +621,12 @@ trashCanButton.addEventListener('click', event => {
                         <div class="content">
                             ${note.attributes.paragraph.substring(0, 100) + '...'}
                             <br>
+                            </div>
                             <div class='hidden-para' style='display: none;'>${note.attributes.paragraph}</div>
-                        </div>
                             <time datetime="2016-1-1">${note.attributes["updated-at"].split('T')[0]}</time>
                     </div>
                     <footer class="card-footer">
-                        <a href="#" class="card-footer-item final-delete-button">Delete</a>
+                        <a href="#" style='background: #C21E56; color: #fff !important;' class="card-footer-item final-delete-button">Delete</a>
                     </footer>
                 `
                 noteContainer.prepend(card)
@@ -644,5 +649,11 @@ trashCanButton.addEventListener('click', event => {
         })
     })
 })
+
+/*********************************
+ * 
+ *     search bar 
+ * 
+*********************************/
 
 main()
