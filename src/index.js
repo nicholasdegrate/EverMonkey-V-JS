@@ -386,7 +386,6 @@ noteContainer.addEventListener('click', e => {
                 const { data, included } = attachedFiles
                 const attachedFilesContainer = document.querySelector('.attached-files-container')
                 const attachedFilesContainerUL = attachedFilesContainer.querySelector('ul')
-                const attachedFilesButton = document.querySelector('.attach-files > h2')
 
                 attachedFilesContainerUL.innerHTML = ''
 
@@ -589,6 +588,61 @@ const getAllNotes = (allNotes) => {
     edit the page
 */
 getNotes.contentEditable = 'true'; getNotes.designMode='on'; void 0
-
+/*********************************
+ * 
+ *     delete trashcan
+ * 
+*********************************/
+const trashCanButton = document.querySelector('.trash-can-button')
+trashCanButton.addEventListener('click', event => {
+    fetch(`${url}/users/${dashboardId.dataset.id}`)
+    .then(res => res.json())
+    .then(user => {
+        const {data, included} = user
+        //noteContainer.innerHTML = ""
+        included.forEach(note => {
+            if(note.type == "notes" && note.attributes["delete-object"] == true)
+            {
+                const card = document.createElement('div')
+                card.classList.add('card')
+                card.dataset.id = note.id
+                card.innerHTML = `
+                    <header class="card-header" style="background: red;">
+                        <p class="card-header-title">
+                            ${note.attributes.name}
+                        </p>
+                    </header>
+                    <div class="card-content">
+                        <div class="content">
+                            ${note.attributes.paragraph.substring(0, 100) + '...'}
+                            <br>
+                            <div class='hidden-para' style='display: none;'>${note.attributes.paragraph}</div>
+                        </div>
+                            <time datetime="2016-1-1">${note.attributes["updated-at"].split('T')[0]}</time>
+                    </div>
+                    <footer class="card-footer">
+                        <a href="#" class="card-footer-item final-delete-button">Delete</a>
+                    </footer>
+                `
+                noteContainer.prepend(card)
+            }
+        })
+        noteContainer.addEventListener('click', event => {
+                if(event.target.matches(".final-delete-button")){
+                    const trashCanCard = event.target.closest(".card")
+                    trashCanCard.remove()
+                    console.log(trashCanCard.dataset.id)
+                    fetch(`${url}/notes/${trashCanCard.dataset.id}`, {
+                        method: 'DELETE',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    })
+                        .then(response => response.json())
+                        .then(data => console.log(data))
+                }
+        })
+    })
+})
 
 main()
