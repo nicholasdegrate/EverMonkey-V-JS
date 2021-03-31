@@ -59,6 +59,8 @@ body {
 
 .notes {
     padding: 2em;
+    outline: none !important;
+    border: none !important;
 }
 .notes > h2 {
     font-size: 2em;
@@ -128,4 +130,17 @@ body {
 */
 .create-notes {
     width: 400px;
+}
+.card-header-title {
+    text-transform: capitalize;
+}
+
+div.card {
+    cursor: pointer;
+}
+
+.li-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }

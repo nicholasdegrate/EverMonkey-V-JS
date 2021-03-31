@@ -246,11 +246,17 @@ const postNoteBook = (id) => {
         .then(newNoteBook => {
 
                 const noteBookItem = document.createElement('li')
+                noteBookItem.classList.add('li-item')    
                 noteBookItem.dataset.id = newNoteBook.data.id
-                /* 
+                
+                /*
                     adding texts into the li
                 */
-                noteBookItem.textContent = newNoteBook.data.attributes.name
+                const span = document.createElement('span')
+                span.textContent = newNoteBook.data.attributes.name
+                const spanOne = document.createElement('span')
+                spanOne.innerHTML = `<i class="fas fa-times"></i>`
+                noteBookItem.append(span, spanOne)
                 /* 
                     appending it back to ul
                 */
@@ -350,9 +356,10 @@ modalCreateNote.addEventListener('submit', e => {
                     </header>
                     <div class="card-content">
                         <div class="content">
-                            ${newNote.data.attributes.paragraph}
+                            ${newNote.data.attributes.paragraph.substring(0, 100) + '...'}
                             <br>
-                            </div>
+                            <div class='hidden-para' style='display: none;'>${note.attributes.paragraph}</div>
+                        </div>
                             <time datetime="2016-1-1">${newNote.data.attributes["updated-at"].split('T')[0]}</time>
                     </div>
                     <footer class="card-footer">
@@ -372,7 +379,15 @@ modalCreateNote.addEventListener('submit', e => {
 *********************************/
 noteContainer.addEventListener('click', e => {
 
-    if (e.target.matches('.edit-button')) {
+    if (e.target.matches('.card-content') || e.target.matches('.content')) {
+        const parentCard = e.target.closest('div.card')
+        console.log(parentCard)
+        const contentParagraph = parentCard.querySelector("div.card-content > .content > .hidden-para").textContent
+        const authorTitle = parentCard.querySelector("p.card-header-title").textContent
+        getNotes.querySelector('h2 > .notes-title').textContent = authorTitle.replace(/\s+/g, ' ').trim()
+        getNotes.querySelector('.edit-paragraph').textContent = contentParagraph.replace(/\s+/g, ' ').trim()
+
+    } else if (e.target.matches('.edit-button')) {
         //   paragraph name of note //submit button
         const form = document.querySelector('.update-notes')
         const noteId = e.target.closest("div.card").dataset.id
@@ -454,9 +469,10 @@ const renderNote = (note) => {
         </header>
         <div class="card-content">
             <div class="content">
-                ${note.attributes.paragraph}
+                ${note.attributes.paragraph.substring(0, 150)  + '...'}
                 <br>
-                </div>
+                <div class='hidden-para' style='display: none;'>${note.attributes.paragraph}</div>
+            </div>
                 <time datetime="2016-1-1">${note.attributes["updated-at"].split('T')[0]}</time>
         </div>
         <footer class="card-footer">
@@ -481,7 +497,7 @@ const getAllNotes = (allNotes) => {
 /* 
     edit the page
 */
-// getNotes.contentEditable = 'true'; getNotes.designMode='on'; void 0
+getNotes.contentEditable = 'true'; getNotes.designMode='on'; void 0
 
 
 main()
