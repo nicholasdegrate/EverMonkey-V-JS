@@ -375,13 +375,56 @@ noteContainer.addEventListener('click', e => {
 
     if (e.target.matches('.card-content') || e.target.matches('.content')) {
         const parentCard = e.target.closest('div.card')
-        console.log(parentCard)
         const contentParagraph = parentCard.querySelector("div.card-content > .content > .hidden-para").textContent
         const authorTitle = parentCard.querySelector("p.card-header-title").textContent
         getNotes.querySelector('h2 > .notes-title').textContent = authorTitle.replace(/\s+/g, ' ').trim()
         getNotes.querySelector('.edit-paragraph').textContent = contentParagraph.replace(/\s+/g, ' ').trim()
 
-        
+        fetch(`${url}/notes/${parentCard.dataset.id}`)
+            .then(res => res.json())
+            .then(attachedFiles => {
+                const { data, included } = attachedFiles
+                const attachedFilesContainer = document.querySelector('.attached-files-container')
+                const attachedFilesContainerUL = attachedFilesContainer.querySelector('ul')
+                const attachedFilesButton = document.querySelector('.attach-files > h2')
+
+                attachedFilesContainerUL.innerHTML = ''
+
+                included.forEach(file => {
+                    const li = document.createElement('li')
+                    li.dataset.id = file.id
+                    li.innerHTML = `
+                            <div class="card">
+                            <header class="card-header">
+                            <p class="card-header-title">
+                                ${file.attributes.name}
+                            </p>
+                            </header>
+                            <p class="card-header-title">
+                                ${file.attributes.file}
+                            </p>
+                        </div>
+                    `
+                    attachedFilesContainerUL.append(li)    
+                })
+
+                
+            })
+        const attachedFilesButton = document.querySelector('.attach-file-btn')
+        attachedFilesButton.addEventListener('click', e => {
+            const fileFormId = parentCard.dataset.id
+            console.log(fileFormId)
+            const modalPostFile = document.querySelector('.modal-attached-file')
+            modalPostFile.style.display = 'block'
+
+            modalPostFile.addEventListener('submit', e => {
+                if (e.target.matches('.post-attached-files')) {
+                    e.preventDefault()
+
+                    console.log(e.target)
+                }
+            })
+        })
 
 
     } else if (e.target.matches('.edit-button')) {

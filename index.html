@@ -171,12 +171,16 @@
                         </h2>
                         </div>
                         <div class='attach-files'>
-                            <h2 class='notebook-title'
+                            <h2 class='notebook-title attach-file-btn'
                             style='font-weight: bold; display: flex; justify-content: space-between; align-items: center;'>
+                            <span>Attached Files</span>
                             <span>
-                                <span>Attached Files</span>
+                                <i class="fas fa-plus"></i>
                             </span>
                         </h2>
+                        <div class='attached-files-container'>
+                            <ul></ul>    
+                        </div>
                         </div>
                     </div>
                 </div>
@@ -234,6 +238,34 @@
                     <label class="label">Update Paragraph</label>
                     <div class="control has-icons-left has-icons-right">
                         <textarea class="textarea" placeholder="10 lines of textarea" rows="10"></textarea>
+                    </div>
+                </div>
+
+
+                <div class="control">
+                    <button class="button is-fullwidth is-link">Submit</button>
+                </div>
+
+            </form>
+        </div>
+        <button class="modal-close is-large" aria-label="close"></button>
+    </div>
+
+    <div class="modal is-active is-clipped modal-attached-file" style='display: none; padding-top: 5em;'>
+        <div class="modal-background"></div>
+        <div class="modal-content" style='height: 70vh; width: 450px;background: #fff; display: flex; justify-content: center; align-items: center; border-radius: 5px;'>
+            <form class='post-attached-files' style='width: 90%;'>
+                <div class="field">
+                    <label class="label">File</label>
+                    <div class="control has-icons-left has-icons-right">
+                        <input class="input" type="text" placeholder="create file name" value="">
+                    </div>
+                </div>
+
+                <div class="field">
+                    <label class="label">name</label>
+                    <div class="control has-icons-left has-icons-right">
+                        <input class="input" type="text" placeholder="create file" value="">
                     </div>
                 </div>
 
