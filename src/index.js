@@ -246,17 +246,11 @@ const postNoteBook = (id) => {
         .then(newNoteBook => {
 
                 const noteBookItem = document.createElement('li')
-                noteBookItem.classList.add('li-item')    
                 noteBookItem.dataset.id = newNoteBook.data.id
-                
-                /*
+                /* 
                     adding texts into the li
                 */
-                const span = document.createElement('span')
-                span.textContent = newNoteBook.data.attributes.name
-                const spanOne = document.createElement('span')
-                spanOne.innerHTML = `<i class="fas fa-times"></i>`
-                noteBookItem.append(span, spanOne)
+                noteBookItem.textContent = newNoteBook.data.attributes.name
                 /* 
                     appending it back to ul
                 */
@@ -358,7 +352,7 @@ modalCreateNote.addEventListener('submit', e => {
                         <div class="content">
                             ${newNote.data.attributes.paragraph.substring(0, 100) + '...'}
                             <br>
-                            <div class='hidden-para' style='display: none;'>${note.attributes.paragraph}</div>
+                            <div class='hidden-para' style='display: none;'>${newNote.data.attributes.paragraph}</div>
                         </div>
                             <time datetime="2016-1-1">${newNote.data.attributes["updated-at"].split('T')[0]}</time>
                     </div>
@@ -386,6 +380,9 @@ noteContainer.addEventListener('click', e => {
         const authorTitle = parentCard.querySelector("p.card-header-title").textContent
         getNotes.querySelector('h2 > .notes-title').textContent = authorTitle.replace(/\s+/g, ' ').trim()
         getNotes.querySelector('.edit-paragraph').textContent = contentParagraph.replace(/\s+/g, ' ').trim()
+
+        
+
 
     } else if (e.target.matches('.edit-button')) {
         //   paragraph name of note //submit button
@@ -493,7 +490,11 @@ const getAllNotes = (allNotes) => {
         renderNote(note)
     })
 }
-
+/*********************************
+ * 
+ *     get attached files
+ * 
+*********************************/
 /* 
     edit the page
 */
