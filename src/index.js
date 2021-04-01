@@ -51,7 +51,6 @@ const submitUserForm = () => {
 		const newUser = {
 			username: e.target[0].value,
 			email: e.target[1].value,
-			profile_image: ''
 		};
 
 		e.target.reset();
@@ -133,7 +132,7 @@ const dashboard = (user) => {
               border-radius: 10px;
               padding: 10px;
               '>
-              <img class='profile-img' src="./public/monkey.svg" width="112" height="28" />
+              <img class='profile-img' src="./public/cat.svg" width="112" height="28" />
           </li>
                 <input type="radio" name="cat" value='0'>
               </label>
@@ -147,7 +146,7 @@ const dashboard = (user) => {
               border-radius: 10px;
               padding: 10px;
               '>
-              <img class='profile-img' src="./public/monkey.svg" width="112" height="28" />
+              <img class='profile-img' src="./public/hen.svg" width="112" height="28" />
           </li>
                 <input type="radio" name="character" value='1'>
               </label>
@@ -175,7 +174,7 @@ const dashboard = (user) => {
               border-radius: 10px;
               padding: 10px;
               '>
-              <img class='profile-img' src="./public/monkey.svg" width="112" height="28" />
+              <img class='profile-img' src="./public/panda-bear.svg" width="112" height="28" />
           </li>
               <input type="radio" name="character" value='3'>
             </label>
@@ -189,7 +188,7 @@ const dashboard = (user) => {
             border-radius: 10px;
             padding: 10px;
             '>
-            <img class='profile-img' src="./public/monkey.svg" width="112" height="28" />
+            <img class='profile-img' src="./public/pig.svg" width="112" height="28" />
         </li>
             <input type="radio" name="character" value='4'>
           </label>
@@ -203,7 +202,7 @@ const dashboard = (user) => {
           border-radius: 10px;
           padding: 10px;
           '>
-          <img class='profile-img' src="./public/monkey.svg" width="112" height="28" />
+          <img class='profile-img' src="./public/sheep.svg" width="112" height="28" />
       </li>
           <input type="radio" name="character" value='5'>
         </label>
@@ -232,9 +231,11 @@ const dashboard = (user) => {
     characterForm.addEventListener('submit', e => {
         e.preventDefault();
 
+        const profileImage = document.querySelector('.profile-img')
+
         let result; 
 
-        const input = characterForm.querySelector('input[name=character]:checked').value
+        const input = characterForm.querySelector('input[name=character]:checked')
 
         const character = {
             0: 'cat.svg',
@@ -245,9 +246,20 @@ const dashboard = (user) => {
             5: 'sheep.svg'
         }
 
-        for (const {key, value} of character) {
-            console.log(key)
+        for (const [key, value] in character) {
+            if (key == input.value) result = character[key]
         }
+        
+        profileImage.src = `./public/${result}`
+        fetch(`${url}/users/${dashboardId.dataset.id}`, {
+            method: 'PATCH',
+            header: {
+                "Content-Type": "application/json"
+            }, body: JSON.stringify({profile_image: String(result)})
+        })
+            .then(res => res.json())
+            .then(data => console.log(data))
+            .catch(err => console.log(err))
 
 
 
