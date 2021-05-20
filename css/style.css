@@ -1,0 +1,260 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+body {
+    overflow: hidden;
+}
+li {
+    list-style-type:none;
+}
+
+#main-wrapper {
+    overflow: hidden;
+}
+::-webkit-scrollbar {
+    width: 0;  /* Remove scrollbar space */
+    background: transparent;  /* Optional: just make scrollbar invisible */
+}
+/* Optional: show position indicator in red */
+::-webkit-scrollbar-thumb {
+    background: #FF0000;
+}
+/* 
+    dashboard
+*/
+
+.main {
+    height: calc(100vh - 64px);
+    width: 100%;
+    background: #F2F2F2;
+    display: grid;
+    grid-template-columns: 239px 30% 1fr;
+    grid-template-rows: 1fr;
+
+}
+.image-picker {
+    display: grid;
+    grid-template-columns:1fr 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
+    justify-content: center;
+    align-items: center;
+}
+.image-picker > label {
+    margin: .5em;
+}
+/* #F2F2F2 */
+.left-bar {
+    height: 100vh;
+    padding: 1em;
+    width: 100%;
+    max-width: 239px;
+    background: #fff;
+    border-right: 1px solid rgb(233, 233, 233);
+}
+.notes-container {
+    padding: 1em;
+    overflow-y: scroll;
+}
+.card {
+    margin-top: 1em;
+}
+.card:first-child {
+    margin-top: 2em;
+}
+.card:last-child {
+    margin-bottom: 10em;
+}
+/* 
+
+*/
+
+.notes {
+    padding: 2em;
+    outline: none !important;
+    border: none !important;
+}
+.notes > h2 {
+    font-size: 2em;
+    font-weight: bold;
+    text-transform: capitalize;
+}
+.right-bar {
+    border-left: 1px solid rgb(233, 233, 233);
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: 1fr 70%;
+}
+.right-bar > div {
+    padding: 1em;
+}
+.attach-files {
+    border-top: 1px solid rgb(233, 233, 233);
+}
+.note-section-container {
+    display: grid;
+    grid-template-columns:60% 1fr;
+    width: 100%;
+    height: 90%;
+    margin-top: 3em;
+    background: #fff;
+}
+.textarea {
+    width: 100%;
+    height: 100vh; 
+    box-sizing: border-box;
+    outline: none !important;
+    border: none !important;
+}
+.textarea:active {
+    outline: none;
+    border: none !important;
+}
+.title-wrapper {
+    cursor: pointer;
+    margin-bottom: 1em;
+    padding-bottom: 1em;
+    border-bottom: 1px solid rgb(233, 233, 233);
+
+}
+
+#notebook-container > li {
+    margin-top: 1em;
+    cursor: pointer;
+    font-weight: 500;
+}
+/* 
+    login
+*/
+.flex-login {
+    height: 100vh;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: rgb(243, 239, 183);
+}
+.card-header {
+    box-shadow: none !important;
+}
+/* 
+    create note
+*/
+.create-notes {
+    width: 400px;
+}
+.card-header-title {
+    text-transform: capitalize;
+}
+
+div.card {
+    cursor: pointer;
+}
+
+.li-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.attach-file-btn {
+    cursor: pointer;
+}
+
+.trash-can-button {
+    cursor: pointer;
+}
+
+
+/* 
+    calendar
+*/
+.container-calendar {
+    background: #ffffff;
+    padding: 15px;
+    max-width: 475px;
+    margin: 0 auto;
+    overflow: auto;
+}
+
+.button-container-calendar button {
+    cursor: pointer;
+    display: inline-block;
+    zoom: 1;
+    background: rgb(243, 239, 183);
+    color: #fff;
+    border: 1px solid rgb(243, 239, 183);
+    border-radius: 4px;
+    padding: 5px 10px;
+    outline: none;
+}
+
+.table-calendar {
+    border-collapse: collapse;
+    width: 100%;
+}
+
+.table-calendar td, .table-calendar th {
+    padding: 5px;
+    /* border: 1px solid #e2e2e2; */
+    text-align: center  !important;
+    vertical-align: top;
+}
+.table-calendar th {
+    color: rgb(172, 172, 172);
+    font-weight: normal;
+}
+.date-picker.selected {
+    /* font-weight: bold; */
+    background: rgb(243, 239, 183);
+    border-radius: 5px;
+}
+
+.date-picker  {
+    text-align: center !important;
+}
+
+/* sunday */
+.date-picker:nth-child(1) {
+}
+
+/* friday */
+.date-picker:nth-child(6) {
+}
+
+#monthAndYear {
+    text-align: center;
+    margin-top: 0;
+}
+
+.button-container-calendar {
+    position: relative;
+    margin-bottom: 1em;
+    overflow: hidden;
+    clear: both;
+}
+
+#previous {
+    float: left;
+}
+
+#next {
+    float: right;
+}
+
+.footer-container-calendar {
+    margin-top: 1em;
+    border-top: 1px solid #dadada;
+    padding: 10px 0;
+}
+
+.footer-container-calendar select {
+    cursor: pointer;
+    display: inline-block;
+    zoom: 1;
+    background: #ffffff;
+    color: #585858;
+    border: 1px solid #bfc5c5;
+    border-radius: 3px;
+    padding: 5px 1em;
+}
