@@ -9,3 +9,6 @@
     <li>JSONAPI-serializers</li>
     <li>postgresql</li>
 </ul>
+
+<h2>Demo</h2>
+<a href='https://www.loom.com/share/f62ab994a3dc428a974b9828049f545d'>link</a>
